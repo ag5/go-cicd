@@ -17,7 +17,7 @@ jobs:
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
           project-name: go-parq-ingester
-          buildspec-override: buildspec.yml
+          buildspec-override: https://raw.githubusercontent.com/ag5/go-infra/main/buildspec.yml
           env-vars-for-codebuild: |
             custom,
             requester,

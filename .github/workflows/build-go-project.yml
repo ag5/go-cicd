@@ -16,6 +16,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+
       - name: Show directory
         run: ls -al /
       - name: Show directory
@@ -32,4 +33,4 @@ jobs:
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
           project-name: go-parq-ingester
-          buildspec-override: /home/runner/work/go-parq-ingester/go-parq-ingester/buildspec.yml
+          buildspec-override: buildspec.yml

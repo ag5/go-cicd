@@ -1,11 +1,5 @@
 name: Trigger Codebuild
 
-on:
-  workflow_call:
-    secrets:
-      token:
-        required: true
-
 jobs:
   Trigger-codebuild:
     runs-on: ubuntu-latest

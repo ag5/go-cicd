@@ -16,18 +16,18 @@ jobs:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     aws-region: eu-central-1
-      - name: Show Current directory
-        run: pwd
-      - name: Show Working directory
-        run: ls -al
-      - name: Move to parent
-        run: cd .. 
-      - name: Show Current directory
-        run: pwd
-      - name: Show Working directory
-        run: ls -al
-      - name: Show Working directory
+      - name: Show directory
+        run: ls -al /
+      - name: Show directory
+        run: ls -al /home
+      - name: Show directory
+        run: ls -al /home/runner
+      - name: Show directory
+        run: ls -al /home/runner/work
+      - name: Show directory
         run: ls -al /home/runner/work/go-parq-ingester
+      - name: Show directory
+        run: ls -al /home/runner/work/go-parq-ingester/go-parq-ingester
       - name: Run CodeBuild
         uses: aws-actions/aws-codebuild-run-build@v1
         with:

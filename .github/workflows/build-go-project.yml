@@ -33,11 +33,3 @@ jobs:
         with:
           project-name: go-parq-ingester
           buildspec-override: /home/runner/work/go-parq-ingester/go-parq-ingester/buildspec.yml
-          env-vars-for-codebuild: |
-            custom,
-            requester,
-            event-name
-        env:
-          custom: my environment variable
-          requester: ${{ github.actor }}
-          event-name: ${{ github.event_name }}

@@ -18,6 +18,8 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
+      - git clone https://github.com/ag5/go-parq-ingester
+
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor

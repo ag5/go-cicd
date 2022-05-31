@@ -19,9 +19,9 @@ phases:
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
       - git clone https://github.com/$GITHUB_REPOSITORY
-      - mv buildspec.yml go-parq-ingester
-      - mv Dockerfile go-parq-ingester
-      - cd go-parq-ingester
+      - mv buildspec.yml $IMAGE_REPO_NAME
+      - mv Dockerfile $IMAGE_REPO_NAME
+      - cd $IMAGE_REPO_NAME
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor
@@ -34,9 +34,9 @@ phases:
   build:
     commands:
       - echo "Build the image and push it to the registry"
-      - docker build -t $GITHUB_REPOSITORY:$GIT_TAG .
-      - docker tag $GITHUB_REPOSITORY:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$GITHUB_REPOSITORY:$GIT_TAG
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$GITHUB_REPOSITORY:$GIT_TAG
+      - docker build -t $IMAGE_REPO_NAME:$GIT_TAG .
+      - docker tag $IMAGE_REPO_NAME:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
   post_build:
     commands:
       - echo "Send Slack notification if build step fails"

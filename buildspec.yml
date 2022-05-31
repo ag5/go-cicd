@@ -18,16 +18,13 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
-      - git clone https://github.com/ag5/go-parq-ingester
+      - git clone https://github.com/$GITHUB_REPOSITORY
       - mv buildspec.yml go-parq-ingester
       - mv Dockerfile go-parq-ingester
       - cd go-parq-ingester
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor
-
-      - echo "Extract git tag"
-      - export GIT_TAG=${CODEBUILD_WEBHOOK_TRIGGER#*/}
 
       - echo "Start docker daemon"
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
@@ -37,9 +34,9 @@ phases:
   build:
     commands:
       - echo "Build the image and push it to the registry"
-      - docker build -t $IMAGE_REPO_NAME:$GIT_TAG .
-      - docker tag $IMAGE_REPO_NAME:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
+      - docker build -t $GITHUB_REPOSITORY:$GIT_TAG .
+      - docker tag $GITHUB_REPOSITORY:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$GITHUB_REPOSITORY:$GIT_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$GITHUB_REPOSITORY:$GIT_TAG
   post_build:
     commands:
       - echo "Send Slack notification if build step fails"

@@ -18,7 +18,9 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
-      - git clone https://github.com/ag5/go-parq-ingester
+      - git init
+      - git remote add origin https://github.com/ag5/go-parq-ingester
+      - git pull origin master
       - ls -al
       - echo "Download go dependencies"
       - go mod download

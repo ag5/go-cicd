@@ -20,6 +20,7 @@ phases:
 
       - git clone https://github.com/$GITHUB_REPOSITORY
       - mv notify.sh $IMAGE_REPO_NAME
+      - chmod +x $IMAGE_REPO_NAME/notify.sh
       - mv buildspec.yml $IMAGE_REPO_NAME
       - mv Dockerfile $IMAGE_REPO_NAME
       - cd $IMAGE_REPO_NAME

@@ -3,7 +3,6 @@ version: 0.2
 phases:
   install:
     commands:
-      - ls -al
       - echo "Bump up go version to 1.18"
       - wget -q https://storage.googleapis.com/golang/go1.18.linux-amd64.tar.gz
       - tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz
@@ -18,12 +17,14 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
+      - echo "Cloning and setting up the repository that we ant to build"
       - git clone https://github.com/$GITHUB_REPOSITORY
       - mv notify.sh $IMAGE_REPO_NAME
       - chmod +x $IMAGE_REPO_NAME/notify.sh
       - mv buildspec.yml $IMAGE_REPO_NAME
       - mv Dockerfile $IMAGE_REPO_NAME
       - cd $IMAGE_REPO_NAME
+      
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor

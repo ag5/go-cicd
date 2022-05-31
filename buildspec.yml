@@ -18,10 +18,10 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
-      - git init
-      - git remote add origin https://github.com/ag5/go-parq-ingester
-      - git pull origin master
-      - ls -al
+      - git clone https://github.com/ag5/go-parq-ingester
+      - mv buildspec.yml go-parq-ingester
+      - mv Dockerfile go-parq-ingester
+      - cd go-parq-ingester
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor

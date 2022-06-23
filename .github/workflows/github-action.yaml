@@ -1,6 +1,6 @@
 # This action is copied from https://github.com/ag5/go-cicd
 # DO NOT EDIT
-# Version 1.1.0
+# Version 1.2.0
 
 name: Build Docker image on AWS Codebuild
 on:
@@ -23,7 +23,12 @@ jobs:
         uses: unfor19/install-aws-cli-action@master
         with:
           version: "2.0.30"
-      - run: aws codebuild start-build --project-name go-release-builder --secondary-sources-override type=GITHUB,location=https://github.com/${GITHUB_REPOSITORY},gitCloneDepth=5,gitSubmodulesConfig={fetchSubmodules=false},buildspec=./buildspec.yaml,reportBuildStatus=false,sourceIdentifier=sourceidentifier --environment-variables-override name=GIT_TAG,value=${GITHUB_REF##*/},type=PLAINTEXT name=IMAGE_REPO_NAME,value=${{ github.event.repository.name }},type=PLAINTEXT name=GITHUB_REPOSITORY,value=${GITHUB_REPOSITORY},type=PLAINTEXT
+      - name: install-jq
+        run: sudo apt-get install -y jq
+      - run: aws codebuild start-build --project-name go-release-builder --secondary-sources-override type=GITHUB,location=https://github.com/${GITHUB_REPOSITORY},gitCloneDepth=5,gitSubmodulesConfig={fetchSubmodules=false},buildspec=./buildspec.yaml,reportBuildStatus=false,sourceIdentifier=sourceidentifier --environment-variables-override name=GIT_TAG,value=${GITHUB_REF##*/},type=PLAINTEXT name=IMAGE_REPO_NAME,value=${{ github.event.repository.name }},type=PLAINTEXT name=GITHUB_REPOSITORY,value=${GITHUB_REPOSITORY},type=PLAINTEXT > build.json
+        shell: bash
+      - name: check_codebuild_status
+        run: ./check_build_status
         shell: bash
 
 # DO NOT EDIT

@@ -19,6 +19,9 @@ phases:
 
       - echo "Cloning and setting up the repository that we want to build"
       - git clone https://github.com/$GITHUB_REPOSITORY
+      - cd $IMAGE_REPO_NAME
+      - git checkout $GIT_TAG
+      - cd ..
       - git clone https://github.com/ag5/go-cicd
       - mv go-cicd/notify.sh $IMAGE_REPO_NAME
       - chmod +x $IMAGE_REPO_NAME/notify.sh

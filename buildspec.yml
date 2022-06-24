@@ -17,12 +17,13 @@ phases:
       - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
       - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
 
-      - echo "Cloning and setting up the repository that we ant to build"
+      - echo "Cloning and setting up the repository that we want to build"
       - git clone https://github.com/$GITHUB_REPOSITORY
-      - mv notify.sh $IMAGE_REPO_NAME
+      - git clone https://github.com/ag5/go-cicd
+      - mv go-cicd/notify.sh $IMAGE_REPO_NAME
       - chmod +x $IMAGE_REPO_NAME/notify.sh
-      - mv buildspec.yml $IMAGE_REPO_NAME
-      - mv Dockerfile $IMAGE_REPO_NAME
+      - mv go-cicd/buildspec.yml $IMAGE_REPO_NAME
+      - mv go-cicd/Dockerfile $IMAGE_REPO_NAME
       - cd $IMAGE_REPO_NAME
       
       - echo "Download go dependencies"

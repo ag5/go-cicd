@@ -27,8 +27,5 @@ jobs:
         run: sudo apt-get install -y jq
       - run: aws codebuild start-build --buildspec-override "$(cat buildspec.yml)" --project-name go-release-builder --source-version $GITHUB_SHA --source-location-override https://github.com/${GITHUB_REPOSITORY} --environment-variables-override name=GIT_TAG,value=${GITHUB_REF_NAME},type=PLAINTEXT name=IMAGE_REPO_NAME,value=${{ github.event.repository.name }},type=PLAINTEXT name=GITHUB_REPOSITORY,value=${GITHUB_REPOSITORY},type=PLAINTEXT --report-build-status-override > build.json
         shell: bash
-      - name: check_codebuild_status
-        run: ./check_build_status.sh
-        shell: bash
 
 # DO NOT EDIT

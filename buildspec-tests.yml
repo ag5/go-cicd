@@ -1,0 +1,38 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Bump up go version to 1.18"
+      - wget -q https://storage.googleapis.com/golang/go1.18.linux-amd64.tar.gz
+      - tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz
+      - export PATH="/usr/local/go/bin:$PATH" && export GOPATH="$HOME/go" && export PATH="$GOPATH/bin:$PATH"
+  pre_build:
+    commands:
+      - echo "Setting up GitHub access"
+      - go env -w GOPRIVATE=github.com/ag5/\*
+      - git config --global url."git@github.com:".insteadOf "https://github.com/"
+      - mkdir -p /root/.ssh
+      - touch /root/.ssh/id_rsa
+      - echo "$CI_SSH_KEY" > /root/.ssh/id_rsa
+      - chmod 700 /root/.ssh && chmod 600 /root/.ssh/id_rsa
+
+      - echo "Cloning and setting up the repository that we want to build"
+      - git clone https://github.com/$GITHUB_REPOSITORY
+      - git clone https://github.com/ag5/go-cicd
+      - mv go-cicd/notify.sh $IMAGE_REPO_NAME
+      - chmod +x $IMAGE_REPO_NAME/notify.sh
+      - mv go-cicd/buildspec-tests.yml $IMAGE_REPO_NAME
+      - mv go-cicd/Dockerfile $IMAGE_REPO_NAME
+      - cd $IMAGE_REPO_NAME
+      
+      - echo "Download go dependencies"
+      - go mod download
+      - go mod vendor
+  build:
+    commands:
+      - sh make.sh
+  post_build:
+    commands:
+      - echo "Send Slack notification if build step fails"
+      - ./notify.sh

@@ -1,0 +1,31 @@
+# This action is copied from https://github.com/ag5/go-cicd
+# DO NOT EDIT
+# Version 1.4.0
+
+name: Build Docker image on AWS Codebuild
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  trigger-codebuild:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      AWS_DEFAULT_REGION: "eu-central-1"
+    steps:
+      - uses: actions/checkout@master
+        with:
+          repository: ag5/go-cicd
+      - name: version
+        id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: "2.7.9"
+      - name: install-jq
+        run: sudo apt-get install -y jq
+      - run: aws codebuild start-build --buildspec-override "$(cat buildspec.yml)" --project-name go-release-builder --source-version $GITHUB_SHA --source-location-override https://github.com/${GITHUB_REPOSITORY} --environment-variables-override name=GIT_TAG,value=${GITHUB_REF_NAME},type=PLAINTEXT name=IMAGE_REPO_NAME,value=${{ github.event.repository.name }},type=PLAINTEXT name=GITHUB_REPOSITORY,value=${GITHUB_REPOSITORY},type=PLAINTEXT --report-build-status-override > build.json
+        shell: bash
+
+# DO NOT EDIT

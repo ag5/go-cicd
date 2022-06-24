@@ -3,7 +3,10 @@
 # Version 1.4.0
 
 name: Build Docker image on AWS Codebuild
-on: push
+on:
+  push:
+    tags:
+      - '*'
 jobs:
   trigger-codebuild:
     runs-on: ubuntu-latest

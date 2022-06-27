@@ -34,7 +34,7 @@ phases:
       - go mod vendor
   build:
     commands:
-      - sh make.sh
+      - make test
   post_build:
     commands:
       - echo "Send Slack notification if build step fails"

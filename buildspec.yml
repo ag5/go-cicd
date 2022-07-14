@@ -3,6 +3,14 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo "Login into aws container registry"
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - |
+          if ! aws ecr describe-repositories --repository-names x &> /dev/null; then
+            echo "The ECR repository NAME does not exists. Please create it first in terraform"
+            exit 1
+          fi
+          
       - echo "Setting up GitHub access"
       - go env -w GOPRIVATE=github.com/ag5/\*
       - git config --global url."git@github.com:".insteadOf "https://github.com/"
@@ -29,16 +37,15 @@ phases:
 
       - echo "Start docker daemon"
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
-
-      - echo "Login into aws container registry"
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - aws ecr describe-repositories --repository-names ${IMAGE_REPO_NAME} || aws ecr create-repository --repository-name ${IMAGE_REPO_NAME}
+      - timeout 15s sh -c "until docker info; do echo .; sleep 1; done"
+      
   build:
     commands:
       - echo "Build the image and push it to the registry"
       - docker build -t $IMAGE_REPO_NAME:$GIT_TAG .
       - docker tag $IMAGE_REPO_NAME:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
+      
   post_build:
     commands:
       - echo "Send Slack notification if build step fails"

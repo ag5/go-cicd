@@ -1,5 +1,14 @@
 version: 0.2
 
+//
+// This codebuild file assumes the Codebuild is invoked with the following environment variables
+//
+// # The name of the ECR repository
+// IMAGE_REPO_NAME=repository-name 
+// # The GitHub repository as in [organization]/[repository]
+// GITHUB_REPOSITORY=ag5/repository-name
+//
+
 phases:
   pre_build:
     commands:
@@ -7,7 +16,7 @@ phases:
       - echo "Login into aws container registry"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - |
-          if ! aws ecr describe-repositories --repository-names x &> /dev/null; then
+          if ! aws ecr describe-repositories --repository-names $IMAGE_REPO_NAME &> /dev/null; then
             echo "The ECR repository NAME does not exists. Please create it first in terraform"
             exit 1
           fi

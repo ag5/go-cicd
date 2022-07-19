@@ -43,6 +43,7 @@ phases:
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor
+      - go install github.com/ag5/go-slack-notifier@latest
 
       - echo "Start docker daemon"
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
@@ -57,5 +58,4 @@ phases:
       
   post_build:
     commands:
-      - echo "Send Slack notification if build step fails"
-      - ./notify.sh
+      - go-slack-notifier -successMessage

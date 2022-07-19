@@ -7,6 +7,7 @@ phases:
       - wget -q https://storage.googleapis.com/golang/go1.18.linux-amd64.tar.gz
       - tar -C /usr/local -xzf go1.18.linux-amd64.tar.gz
       - export PATH="/usr/local/go/bin:$PATH" && export GOPATH="$HOME/go" && export PATH="$GOPATH/bin:$PATH"
+
   pre_build:
     commands:
       - echo "Setting up GitHub access"
@@ -32,10 +33,12 @@ phases:
       - echo "Download go dependencies"
       - go mod download
       - go mod vendor
+      - go install github.com/ag5/go-slack-notifier@latest
+
   build:
     commands:
       - make test
+
   post_build:
     commands:
-      - echo "Send Slack notification if build step fails"
-      - ./notify.sh
+      - go-slack-notifier -successMessage

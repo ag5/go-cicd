@@ -24,8 +24,6 @@ phases:
       - git checkout $GIT_TAG
       - cd ..
       - git clone https://github.com/ag5/go-cicd
-      - mv go-cicd/notify.sh $IMAGE_REPO_NAME
-      - chmod +x $IMAGE_REPO_NAME/notify.sh
       - mv go-cicd/buildspec-tests.yml $IMAGE_REPO_NAME
       - mv go-cicd/Dockerfile $IMAGE_REPO_NAME
       - cd $IMAGE_REPO_NAME

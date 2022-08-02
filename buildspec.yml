@@ -42,10 +42,6 @@ phases:
       - go mod download
       - go mod vendor
       - go install github.com/ag5/go-slack-notifier@latest
-
-      - echo "Start docker daemon"
-      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 --storage-driver=overlay&
-      - timeout 15s sh -c "until docker info; do echo .; sleep 1; done"
       
   build:
     commands:

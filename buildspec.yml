@@ -19,9 +19,6 @@ phases:
             echo "The ECR repository NAME does not exists. Please create it first in terraform"
             exit 1
           fi
-      
-      - echo "Pull latest image to use for docker build cache"
-      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest || true
 
       - echo "Setting up GitHub access"
       - go env -w GOPRIVATE=github.com/ag5/\*
@@ -53,13 +50,9 @@ phases:
   build:
     commands:
       - echo "Build the image and push it to the registry"
-      - docker build --cache-from $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest -t $IMAGE_REPO_NAME:$GIT_TAG .
+      - docker build -t $IMAGE_REPO_NAME:$GIT_TAG .
       - docker tag $IMAGE_REPO_NAME:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TAG
-
-      - echo "Push the image as latest to ECR"
-      - docker tag $IMAGE_REPO_NAME:$GIT_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$GIT_TA
       
   post_build:
     commands:
